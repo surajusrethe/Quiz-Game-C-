@@ -1,0 +1,55 @@
+#include <iostream>
+#include <string>
+
+using namespace std;
+
+// Function to ask a question and check the answer
+bool askQuestion(const string& question, const string& correctAnswer) {
+    string userAnswer;
+    cout << question << "\nYour Answer: ";
+    cin >> userAnswer;
+
+    // Convert the user's answer to lowercase for case-insensitive comparison
+    for (char& c : userAnswer) {
+        c = tolower(c);
+    }
+
+    return userAnswer == correctAnswer;
+}
+
+int main() {
+    int score = 0;
+
+    cout << "Welcome to the C++ Quiz Game!\n";
+
+    // Define your questions and answers
+    string questions[] = {
+        "What is the capital of France?",
+        "Which programming language is this game written in?",
+        "How many continents are there on Earth?",
+        "What is 2 + 2?",
+    };
+
+    string answers[] = {
+        "paris",
+        "c++",
+        "7",
+        "4",
+    };
+
+    int numQuestions = sizeof(questions) / sizeof(questions[0]);
+
+    // Ask questions and update the score
+    for (int i = 0; i < numQuestions; ++i) {
+        if (askQuestion(questions[i], answers[i])) {
+            cout << "Correct!\n";
+            score++;
+        } else {
+            cout << "Incorrect. The correct answer is: " << answers[i] << "\n";
+        }
+    }
+
+    cout << "Quiz completed! You got " << score << " out of " << numQuestions << " questions correct.\n";
+
+    return 0;
+}
