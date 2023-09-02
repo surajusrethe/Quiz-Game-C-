@@ -1,55 +1,97 @@
 #include <iostream>
 #include <string>
+#include <vector>
 
 using namespace std;
 
-// Function to ask a question and check the answer
-bool askQuestion(const string& question, const string& correctAnswer) {
-    string userAnswer;
-    cout << question << "\nYour Answer: ";
-    cin >> userAnswer;
+class Question {
+public:
+    Question(const string& questionText, const string& correctAnswer)
+        : questionText(questionText), correctAnswer(correctAnswer) {}
 
-    // Convert the user's answer to lowercase for case-insensitive comparison
-    for (char& c : userAnswer) {
-        c = tolower(c);
+    bool checkAnswer(const string& userAnswer) const {
+        // Convert both the user's answer and correct answer to lowercase for comparison
+        string userAnswerLower = toLower(userAnswer);
+        string correctAnswerLower = toLower(correctAnswer);
+        return userAnswerLower == correctAnswerLower;
     }
 
-    return userAnswer == correctAnswer;
+    string getQuestionText() const {
+        return questionText;
+    }
+
+    string getCorrectAnswer() const {
+        return correctAnswer;
+    }
+
+private:
+    string questionText;
+    string correctAnswer;
+
+    string toLower(const string& str) const {
+        string result = str;
+        for (char& c : result) {
+            c = tolower(c);
+        }
+        return result;
+    }
+};
+
+class Player {
+public:
+    Player(const string& name) : name(name), score(0) {}
+
+    void increaseScore() {
+        score++;
+    }
+
+    string getName() const {
+        return name;
+    }
+
+    int getScore() const {
+        return score;
+    }
+
+private:
+    string name;
+    int score;
+};
+
+// Function to ask a question and check the answer
+bool askQuestion(const Question& question) {
+    string userAnswer;
+    cout << question.getQuestionText() << "\nYour Answer: ";
+    cin >> userAnswer;
+
+    return question.checkAnswer(userAnswer);
 }
 
 int main() {
-    int score = 0;
-
     cout << "Welcome to the C++ Quiz Game!\n";
+    cout << "Enter your name: ";
+    string playerName;
+    cin >> playerName;
 
-    // Define your questions and answers
-    string questions[] = {
-        "What is the capital of France?",
-        "Which programming language is this game written in?",
-        "How many continents are there on Earth?",
-        "What is 2 + 2?",
+    Player player(playerName);
+
+    vector<Question> questions = {
+        Question("What is the capital of France?", "Paris"),
+        Question("Which programming language is this game written in?", "C++"),
+        Question("How many continents are there on Earth?", "7"),
+        Question("What is 2 + 2?", "4"),
     };
 
-    string answers[] = {
-        "paris",
-        "c++",
-        "7",
-        "4",
-    };
-
-    int numQuestions = sizeof(questions) / sizeof(questions[0]);
-
-    // Ask questions and update the score
-    for (int i = 0; i < numQuestions; ++i) {
-        if (askQuestion(questions[i], answers[i])) {
+    for (const Question& question : questions) {
+        if (askQuestion(question)) {
             cout << "Correct!\n";
-            score++;
+            player.increaseScore();
         } else {
-            cout << "Incorrect. The correct answer is: " << answers[i] << "\n";
+            cout << "Incorrect. The correct answer is: " << question.getCorrectAnswer() << "\n";
         }
     }
 
-    cout << "Quiz completed! You got " << score << " out of " << numQuestions << " questions correct.\n";
+    cout << "Quiz completed, " << playerName << "! You got " << player.getScore() << " out of " << questions.size() << " questions correct.\n";
 
     return 0;
 }
